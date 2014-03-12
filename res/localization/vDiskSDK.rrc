@@ -1,0 +1,127 @@
+ABOUT_BBW_BROWSE_OTHER_APPS#0="Browse other apps";
+ABOUT_CONTACT#0="Contact:";
+ABOUT_CONTACT_AUTHOR#0="\u2022 Walkline Wang";
+ABOUT_CONTACT_EMAIL#0="\u2022 E-mail: walkline@gmail.com";
+ABOUT_CONTACT_WEIBO#0="\u2022 Weibo: @Walkline";
+ABOUT_INTRO#0="A sina vdisk client, applicable to OS6 and above.";
+ABOUT_SHORTCUTKEYS#0="Shortcut Keys:";
+ABOUT_TIP_OF_KEY_A#0="\u2022 A: Show this screen";
+ABOUT_TIP_OF_KEY_B#0="\u2022 B: Scroll list to bottom";
+ABOUT_TIP_OF_KEY_D#0="\u2022 D: Download selected file";
+ABOUT_TIP_OF_KEY_DEL#0="\u2022 Del: Delete selected file/folder";
+ABOUT_TIP_OF_KEY_ESC#0="\u2022 Esc: Back to parent folder";
+ABOUT_TIP_OF_KEY_N#0="\u2022 N: Create a new folder";
+ABOUT_TIP_OF_KEY_R#0="\u2022 R: Refresh current folder";
+ABOUT_TIP_OF_KEY_T#0="\u2022 T: Scroll list to top";
+ABOUT_TIP_OF_KEY_U#0="\u2022 U: Upload file";
+ABOUT_TIP_OF_KEY_X#0="\u2022 X: Force exit this app";
+ABOUT_TITLE#0="About";
+ABOUT_VERSION#0="ver: ";
+CONTEXTMENU_DELETE#0="Delete";
+CONTEXTMENU_DOWNLOAD#0="Download";
+CONTEXTMENU_MOVE#0="Move";
+CONTEXTMENU_PREVIEW#0="Preview";
+CONTEXTMENU_PROPERTY#0="Porperty";
+CONTEXTMENU_RENAME#0="Rename";
+CONTEXTMENU_SHARE#0="Share";
+CONTEXTMENU_UNSHARE#0="Unshare";
+DIALOG_CHOICES_YESNO#0={
+    "Y\u0332es",
+    "N\u0332o",
+};
+DIALOG_MESSAGE_DELETE_OBJECT#0="Do you want to delete this object?";
+FILEPICKER_TITLE_FILE#0="Choose file";
+FILEPICKER_TITLE_MUSIC#0="Choose music";
+FILEPICKER_TITLE_PICTURE#0="Choose picture";
+FILEPICKER_TITLE_RINGTONE#0="Choose ringtone";
+FILEPICKER_TITLE_VIDEO#0="Choose video";
+FILEPICKER_TITLE_VOICENOTE#0="Choose voice note";
+LOGIN_BUTTON_LOGIN#0="Login";
+LOGIN_CHECKBOX_SEMIAUTO_LOGIN#0="Semi-Auto login";
+LOGIN_INPUT_PASSWORD#0="Password: ";
+LOGIN_INPUT_USERNAME#0="Username: ";
+MENU_ABOUT#0="A\u0332bout";
+MENU_BBWORLD_WRITE_A_REVIEW#0="Write a review";
+MENU_EXIT#0="Ex\u0332it";
+MENU_REFRESH#0="R\u0332efresh";
+MENU_RUN_IN_BACKGROUND#0="Run in background";
+MENU_SEARCH#0="S\u0332earch";
+MENU_SETTINGS#0="Settings";
+MENU_UPLOAD#0="U\u0332pload";
+MESSAGE_ALERT_CAN_NOT_PREVIEW_FILE#0="Can not preview this file!";
+MESSAGE_ALERT_TOO_LARGE_FILE#0="Selected file is too large to upload, max file limitation is ";
+MESSAGE_ERROR_ACCESS_FORBIDDEN#0="Access Forbidden!";
+MESSAGE_ERROR_CANNOT_LOAD_SETTINGS#0="Can not load settings data!";
+MESSAGE_ERROR_CANNOT_SAVE_SETTINGS#0="Can not save settings data!";
+MESSAGE_ERROR_CREATE_FOLDER_FAILED#0="Create folder failed!";
+MESSAGE_ERROR_DELETE_OBJECT_FAILED#0="Delete object failed!";
+MESSAGE_ERROR_DOWNLOAD_EXCEPTION#0="Download abnormal situation!";
+MESSAGE_ERROR_FILE_NOT_AVAILABLE#0="File not available!";
+MESSAGE_ERROR_GET_PREVIEW_IMAGE_URL_FAILED#0="Get preview image url failed!";
+MESSAGE_ERROR_SHARE_UNSHARE_FILE_FAILED#0="Share/Unshare file failed!";
+MESSAGE_ERROR_UNABLE_CREATE_FOLDER#0="Unable to create download folder!";
+MESSAGE_ERROR_UNABLE_REFRESH_ACCESSTOKEN#0="Unable to refresh the Access Token!";
+MESSAGE_ERROR_UPLOAD_EXCEPTION#0="Upload abnormal situation!";
+MESSAGE_INFO_CLEAN_ACCOUNT_SUCCESS#0="Account information already cleaned!";
+MESSAGE_INFO_DOWNLOAD_SUCCESS#0="Download file success!";
+MESSAGE_INFO_GETTING_SEGMENT_INFO#0="Getting segments info";
+MESSAGE_INFO_RENAME_SUCCESS#0="Rename file/folder success!";
+MESSAGE_INFO_UNSHARE_SUCCESS#0="Unshare file success!";
+MESSAGE_INFO_UPLOADING_SEGMENT#0="Uploading segments";
+MESSAGE_INFO_UPLOAD_SUCCESS#0="Upload file success!";
+MESSAGE_INFO_USER_CANCELLED#0="Cancelled by user!";
+NEWFOLDER_BUTTON_CANCEL#0="Cancel";
+NEWFOLDER_BUTTON_OK#0="OK";
+NEWFOLDER_CREATE_NEW_FOLDER#0="Create a new folder";
+NEWFOLDER_LABEL_FOLDER#0="Folder: ";
+PLEASEWAIT_BUTTON_CANCEL#0="Cancel";
+PLEASEWAIT_DOWNLOADING#0="Downloading ";
+PLEASEWAIT_UPLOADING#0="Uploading ";
+RENAME_BUTTON_CANCEL#0="Cancel";
+RENAME_BUTTON_OK#0="OK";
+RENAME_LABEL_NAME#0="Name: ";
+RENAME_RENAME_OBJECT#0="Rename";
+ROOT_FOLDER#0="root";
+SETTINGS_FILEACTION#0="File action";
+SETTINGS_FILEACTION_ACTION#0="Default action:";
+SETTINGS_FILEACTION_ACTION_DESCRIPTION#0="The default operation performed after clicking the file list.";
+SETTINGS_FILEACTION_ACTION_ITEMS#0={
+    "Popup Menu",
+    "Download",
+    "Preview",
+    "Property",
+};
+SETTINGS_LOGIN#0="Login";
+SETTINGS_LOGIN_AUTOLOGIN#0="Semi-auto login:";
+SETTINGS_LOGIN_AUTOLOGIN_DESCRIPTION#0="Automatically fill in the username and password, the user manually authorize login.";
+SETTINGS_LOGIN_BUTTON_CLEAN_INFORMATION#0="Clean login information";
+SETTINGS_PREVIEW#0="Preview";
+SETTINGS_PREVIEW_SIZE#0="Image size:";
+SETTINGS_PREVIEW_SIZE_DESCRIPTION#0="Size of previewed images.";
+SETTINGS_SHORTCUT#0="Shortcut key";
+SETTINGS_SHORTCUT_KEY#0="Shortcut key:";
+SETTINGS_SHORTCUT_KEY_DESCRIPTION#0="Use the shortcut on the HomeScreen to start this app.";
+SETTINGS_SHORTCUT_NONE#0="None";
+SETTINGS_STORAGE#0="Storage";
+SETTINGS_STORAGE_LOCATION#0="Storage location:";
+SETTINGS_STORAGE_LOCATION_DESCRIPTION#0="Downloaded file will be stored here.";
+SETTINGS_STORAGE_LOCATION_ITEMS#0={
+    "Built-in Storage",
+    "Media Card",
+};
+SETTINGS_STORAGE_LOCATION_URI#0="Location:";
+SETTINGS_STORAGE_OVERWRITE#0="Overwrite exist file:";
+SETTINGS_TITLE#0="Settings";
+SETTINGS_UPLOAD#0="Upload";
+SETTINGS_UPLOAD_METHOD#0="Upload method:";
+SETTINGS_UPLOAD_SAFEMODE#0="Safe mode:";
+SETTINGS_UPLOAD_SAFEMODE_DESCRIPTION#0="Use HTTPS or HTTP protocol to upload files.";
+SETTINGS_UPLOAD_SECTIONSIZE#0="Section size:";
+SETTINGS_UPLOAD_SECTIONSIZE_DESCRIPTION#0="According to section size split file that used for upload large file.";
+UPLOAD_FILE_TITLE#0="Select upload file";
+UPLOAD_FILE_TYPE_FILE#0="F\u0332ile";
+UPLOAD_FILE_TYPE_MUSIC#0="M\u0332usic";
+UPLOAD_FILE_TYPE_PICTURE#0="P\u0332icture";
+UPLOAD_FILE_TYPE_RINGTONE#0="R\u0332ingtone";
+UPLOAD_FILE_TYPE_VIDEO#0="V\u0332ideo";
+UPLOAD_FILE_TYPE_VOICENOTE#0="Voice n\u0332ote";
