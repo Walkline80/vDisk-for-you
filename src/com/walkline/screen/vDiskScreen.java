@@ -463,7 +463,7 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 		if (item.isThumbExists())
 		{
 			UiApplication.getUiApplication().pushScreen(new PreviewImageFullScreen(_vDisk, item.getPath()));			
-		} else if (item.getFilename().endsWith(".mp3") | item.getFilename().endsWith(".wma")) {
+		} else if (item.getFilename().toLowerCase().endsWith(".mp3") | item.getFilename().toLowerCase().endsWith(".wma") | item.getFilename().toLowerCase().endsWith(".mp4")) {
 			UiApplication.getUiApplication().pushScreen(new MediaPlayMainScreen(_vDisk, item.getPath()));
 		} else {
 			Function.errorDialog(getResString(MESSAGE_ALERT_CAN_NOT_PREVIEW_FILE));

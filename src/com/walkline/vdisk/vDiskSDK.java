@@ -1044,7 +1044,7 @@ public class vDiskSDK implements vDiskSDKResource
 	{
 		protected LoginScreen()
 		{
-			super(vDiskConfig.authorizeURL + "?client_id=" + vDiskConfig.client_ID + "&redirect_uri=" + vDiskConfig.redirect_URI + "&display=mobile&response_type=token", lcf);
+			super(vDiskConfig.authorizeURL + "?client_id=" + vDiskConfig.client_ID + "&redirect_uri=" + vDiskConfig.redirect_URI + "&display=mobile&response_type=code", lcf);
 		}
 
 		protected boolean hasAccessToken(String pUrl)
@@ -1110,6 +1110,7 @@ public class vDiskSDK implements vDiskSDKResource
 
 		protected String getAccessTokenFromUrl(String url)
 		{
+			String code = null;
 			String at = null;
 
 			if ((url != null) && !url.trim().equals(""))
@@ -1126,10 +1127,54 @@ public class vDiskSDK implements vDiskSDKResource
 						stopIndex = url.indexOf(';', startIndex);
 					}
 					at = url.substring(url.indexOf('=', startIndex) + 1, stopIndex);
+				} else {
+					startIndex = url.indexOf("?code=");
+					if (startIndex > -1) {
+						startIndex++;
+						int stopIndex = url.length();
+						if (url.indexOf('&', startIndex) > -1) {
+							stopIndex = url.indexOf('&', startIndex);
+						} else if (url.indexOf(';', startIndex) > -1) {
+							stopIndex = url.indexOf(';', startIndex);
+						}
+						code = url.substring(url.indexOf('=', startIndex) + 1, stopIndex);
+						at = getAccessTokenFromCode(code);
+					}
 				}
 			}
 
 			return at;
+		}
+
+		protected String getAccessTokenFromCode(String pCode)
+		{
+			JSONObject result = null;
+			String at = null;
+
+			if ((pCode == null) || pCode.trim().equals("")) {return null;}
+
+			Hashtable args = new Hashtable();
+			args.put("client_id", vDiskConfig.client_ID);
+			args.put("client_secret", vDiskConfig.client_SERCRET);
+			args.put("grant_type", "authorization_code");
+			args.put("redirect_uri", vDiskConfig.redirect_URI);
+			args.put("code", pCode);
+
+			try {
+				StringBuffer responseBuffer = http.doPost(vDiskConfig.accessTokenURL, args);
+
+				if ((responseBuffer == null) || (responseBuffer.length() <= 0)) {at = null;}
+
+				result = new JSONObject(new JSONTokener(responseBuffer.toString()));
+				checkErrorCode(result);
+			} catch (Exception e) {
+				e.printStackTrace();
+
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+
+			return result.optString("access_token");
 		}
 	}
 
