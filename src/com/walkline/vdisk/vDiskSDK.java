@@ -1,5 +1,6 @@
 package com.walkline.vdisk;
 
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -9,10 +10,12 @@ import localization.vDiskSDKResource;
 import net.rim.device.api.browser.field2.BrowserField;
 import net.rim.device.api.browser.field2.BrowserFieldRequest;
 import net.rim.device.api.i18n.ResourceBundle;
+import net.rim.device.api.i18n.SimpleDateFormat;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Dialog;
 
 import org.json.me.JSONArray;
 import org.json.me.JSONException;
@@ -58,13 +61,16 @@ public class vDiskSDK implements vDiskSDKResource
 
 	private static final String NULL = "";
 	protected ApplicationSettings appSettings;
+	protected vDiskAppConfig _appConfig;
 	protected ConnectionFactory cf;
 	//protected LoggableConnectionFactory lcf;
 	protected ConnectionFactory lcf;
 	protected HttpClient http;
 	protected PleaseWaitPopupScreen _waitScreen = null;
 
-	protected String _accessToken;
+	protected String _accessToken = "";
+	protected String _refreshToken = "";
+	protected long _expiresIn = 0;
 	protected String _id = "";
 	protected String _pwd = "";
 	protected boolean _autoMode = true;
@@ -103,6 +109,8 @@ public class vDiskSDK implements vDiskSDKResource
 		http = new HttpClient(cf);
 	}
 
+	public void setAppConfig(vDiskAppConfig appConfig) {_appConfig = appConfig;}
+
 	public void setDownloadURI(String uri) {_downloadURI = uri;}
 	
 	public String getDownloadURI() {return _downloadURI;}
@@ -140,10 +148,18 @@ public class vDiskSDK implements vDiskSDKResource
 	
 	public String getPreviewSize() {return ThumbnailSize.choicesPreviewValue[_imagePreviewSize];}
 
+	public void setAccessToken(String accessToken) {_accessToken = accessToken;}
+
 	public String getAccessToken() {return _accessToken;}
 
-	public void setAccessToken(String accessToken) {_accessToken = accessToken;}
-	
+	public void setRefreshToken(String refreshToken) {_refreshToken = refreshToken;}
+
+	public String getRefreshToken() {return _refreshToken;}
+
+	public void setExpiresIn(long expiresIn) {_expiresIn = expiresIn;}
+
+	public long getExpiresIn() {return _expiresIn;}
+
 	public boolean hasAccessToken()
 	{
 		String at = getAccessToken();
@@ -156,11 +172,22 @@ public class vDiskSDK implements vDiskSDKResource
 		}
 	}
 
+	public boolean isAccessTokenValid()
+	{
+		boolean result = false;
+
+		if (!hasAccessToken()) {return result;}
+
+		if (getExpiresIn() > System.currentTimeMillis()) {result = true;}
+
+		return result;
+	}
+
 	public void refreshAccessToken(final boolean force) throws vDiskException
 	{
 		synchronized (ACCESS_TOKEN_LOCK)
 		{
-			if (force) // || !isAccessTokenValid()) {
+			if (force)
 			{
 				setAccessToken(null);
 				if (Application.isEventDispatchThread())
@@ -179,6 +206,47 @@ public class vDiskSDK implements vDiskSDKResource
 				}
 			}
 		}
+	}
+
+	public void refreshAccessToken()
+	{
+		JSONObject result = null;
+
+		if ((getRefreshToken() == null) || getRefreshToken().trim().equals("")) {return;}
+
+		Hashtable args = new Hashtable();
+		args.put("client_id", vDiskConfig.client_ID);
+		args.put("client_secret", vDiskConfig.client_SERCRET);
+		args.put("grant_type", "refresh_token");
+		args.put("refresh_token", getRefreshToken());
+
+		try {
+			StringBuffer responseBuffer = http.doPost(vDiskConfig.accessTokenURL, args);
+
+			if ((responseBuffer == null) || (responseBuffer.length() <= 0)) {return;}
+
+			result = new JSONObject(new JSONTokener(responseBuffer.toString()));
+			//checkErrorCode(result);
+			
+			if (result.optInt("code") != 0)
+			{
+				Dialog.alert("Refresh token error:" + "\n\nCode: " + result.optInt("code") + "\nMsg: " + result.optString("msg"));
+				
+				refreshAccessToken(true);
+				
+				return;
+			}
+
+			setAccessToken(result.optString("access_token"));
+			setRefreshToken(result.optString("refresh_token"));
+			setExpiresIn(result.optLong("expires_in")*1000);
+
+			_appConfig.setAccessToken(getAccessToken());
+			_appConfig.setRefreshToken(getRefreshToken());
+			_appConfig.setExpiresIn(getExpiresIn());
+			_appConfig.save(null, false);
+		} catch (Exception e) {
+		} catch (Throwable t) {}
 	}
 
 	public StringBuffer checkResponse(StringBuffer res) throws vDiskException
@@ -211,13 +279,16 @@ public class vDiskSDK implements vDiskSDKResource
 	
 	private JSONObject doRequest(String methond, String api, Hashtable args, String root, String path) throws vDiskException
 	{
-		synchronized (ACCESS_TOKEN_LOCK) {
+		synchronized (ACCESS_TOKEN_LOCK)
+		{
 			if (!hasAccessToken())
 			{
 				refreshAccessToken(true);
 				try {
 					ACCESS_TOKEN_LOCK.wait(vDiskConfig.AUTHORIZE_TIMEDOUT);
 				} catch (InterruptedException e) {}
+			} else if (!isAccessTokenValid()) {
+				refreshAccessToken();
 			}
 		}
 
@@ -283,6 +354,8 @@ public class vDiskSDK implements vDiskSDKResource
 				try {
 					ACCESS_TOKEN_LOCK.wait(vDiskConfig.AUTHORIZE_TIMEDOUT);
 				} catch (InterruptedException e) {}
+			} else if (!isAccessTokenValid()) {
+				refreshAccessToken();
 			}
 		}
 
@@ -346,6 +419,8 @@ public class vDiskSDK implements vDiskSDKResource
 				try {
 					ACCESS_TOKEN_LOCK.wait(vDiskConfig.AUTHORIZE_TIMEDOUT);
 				} catch (InterruptedException e) {}
+			} else if (!isAccessTokenValid()) {
+				refreshAccessToken();
 			}
 		}
 
@@ -986,6 +1061,12 @@ public class vDiskSDK implements vDiskSDKResource
 			String detailCode=result.optString("error_detail_code");
 			String error=result.optString("error");
 
+			if (detailCode.equals("40102"))
+			{
+				refreshAccessToken(true);
+				return;
+			}
+
 			StringBuffer buffer = new StringBuffer();
 			String retry = result.optString("retry");
 
@@ -1037,7 +1118,7 @@ public class vDiskSDK implements vDiskSDKResource
 									 "\nerror_detail_code: " + detailCode +
 									 "\nerror: " + error +
 									 dataString); 
-									}
+		}
 	}
 	
 	protected class LoginScreen extends BrowserScreen
@@ -1149,7 +1230,6 @@ public class vDiskSDK implements vDiskSDKResource
 		protected String getAccessTokenFromCode(String pCode)
 		{
 			JSONObject result = null;
-			String at = null;
 
 			if ((pCode == null) || pCode.trim().equals("")) {return null;}
 
@@ -1163,18 +1243,22 @@ public class vDiskSDK implements vDiskSDKResource
 			try {
 				StringBuffer responseBuffer = http.doPost(vDiskConfig.accessTokenURL, args);
 
-				if ((responseBuffer == null) || (responseBuffer.length() <= 0)) {at = null;}
+				if ((responseBuffer == null) || (responseBuffer.length() <= 0)) {return null;}
 
 				result = new JSONObject(new JSONTokener(responseBuffer.toString()));
 				checkErrorCode(result);
+				
+				setAccessToken(result.optString("access_token"));
+				setRefreshToken(result.optString("refresh_token"));
+				setExpiresIn(result.optInt("expires_in"));
+				_appConfig.setAccessToken(getAccessToken());
+				_appConfig.setRefreshToken(getRefreshToken());
+				_appConfig.setExpiresIn(getExpiresIn());
+				_appConfig.save(null, false);
 			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (Throwable t) {}
 
-			} catch (Throwable t) {
-				t.printStackTrace();
-			}
-
-			return result.optString("access_token");
+			return getAccessToken();
 		}
 	}
 

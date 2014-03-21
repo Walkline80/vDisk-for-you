@@ -60,6 +60,8 @@ public class vDiskApp extends UiApplication
 			_appConfig.initialize(_vDisk);
 		}
 
+		_vDisk.setAppConfig(_appConfig);
+
 		if (_appConfig.isAccountEmpty() && _appConfig.isAutoMode())
 		{
 			pushScreen(new LoginFullScreen(_vDisk, _appConfig));

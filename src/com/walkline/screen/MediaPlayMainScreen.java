@@ -8,6 +8,7 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
+import javax.microedition.media.control.VideoControl;
 
 import localization.vDiskSDKResource;
 import net.rim.blackberry.api.browser.Browser;
@@ -23,6 +24,7 @@ import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.Clipboard;
 import net.rim.device.api.system.Display;
+import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.FullScreen;
@@ -56,6 +58,7 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 	private GetMediaURLThread _getMedia = new GetMediaURLThread();
 	private LoadingScreen _loadingScreen = new LoadingScreen();
 	private FullScreen _main;
+	private Field _videoField;
 
 	public MediaPlayMainScreen(vDiskSDK vDisk, String filePath)
 	{
@@ -89,7 +92,7 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 
 		_browserField = new BrowserField(bfc);
 
-		add(_browserField);
+		//add(_browserField);
 		//_browserField.addListener(new MyBrowserFieldListener());
 
 		_getMedia.start();
@@ -126,11 +129,11 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 
 	private void showContent()
 	{
-		if (_browserField.getScreen() == null)
+		if (_videoField.getScreen() == null)
 		{
 			synchronized (UiApplication.getEventLock())
 			{
-				_main.add(_browserField);
+				_main.add(_videoField);
 			}
 		}
 		
@@ -155,12 +158,6 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 					{
 						_url = value.getURL();
 
-						String mediaPlayer = "<html><head><meta name=\"viewport\" content=\"width=device-width,height=device-height,initial-scale=1.0\"></head><body>Hello<video controls autoplay loop src=\"#url#\" width=\"#width#\" height=\"#height#\">Your browser can't support HTML5 video</video></body></html>";
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#url#", _url);
-
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#width#", String.valueOf(Display.getWidth()));
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#height#", String.valueOf(Display.getHeight()));
-
 						try {
 							FileConnection file;
 							OutputStream output = null;
@@ -170,16 +167,43 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 							file.setWritable(true);
 
 							output = file.openOutputStream();
-							output.write(mediaPlayer.getBytes());
+							output.write(_url.getBytes());
 							output.flush();
 							output.close();
 							file.close();
 						} catch (Exception e) {
 						}
 
-						//Function.errorDialog(mediaPlayer);
-						//_browserField.displayContent(mediaPlayer, "");
-						
+						Player recorder;
+						try {
+							recorder = Manager.createPlayer(_url);
+							
+					        if (recorder != null)
+					        {
+					            recorder.prefetch();
+
+					            VideoControl videoControl = (VideoControl) recorder.getControl("VideoControl");
+
+					            if (videoControl != null)
+					            {
+					                // Use USE_GUI_PRIMITIVE since recorder returns a viewfinder
+					                // Use USE_GUI_ADVANCED if player is returning a playback field
+					                // in your app
+					                _videoField = (Field) videoControl.initDisplayMode(VideoControl.USE_GUI_PRIMITIVE, "net.rim.device.api.ui.Field" );
+
+									videoControl.setDisplaySize(Display.getWidth(), Display.getHeight());
+					                videoControl.setVisible( true );
+					                
+					                recorder.start();
+					            }
+					        }
+						} catch (IOException e1)
+						{
+							Function.errorDialog(e1.toString());
+						} catch (MediaException e1)
+						{
+							Function.errorDialog(e1.toString());
+						}
 					} else {
 						Function.errorDialog("Get file direct link failed.");
 					}
