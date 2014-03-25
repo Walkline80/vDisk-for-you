@@ -205,14 +205,6 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     		} catch (vDiskException e) {}
     	}
     };
-
-    MenuItem menuTest = new MenuItem(new StringProvider("test"), 100, 10)
-    {
-    	public void run()
-    	{
-    		_vDisk.refreshAccessToken();
-    	}
-    };
     
     protected void makeMenu(Menu menu, int instance)
     {
@@ -235,9 +227,7 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     	//menu.add(menuRunInBackground);
     	//menu.addSeparator();
     	menu.add(menuExit);
-    	menu.addSeparator();
 
-    	menu.add(menuTest);
     	super.makeMenu(menu, instance);
     }
 
@@ -779,7 +769,10 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 				{
 					public void run()
 					{
-						labelTitleField.setText(vDiskAppConfig.APP_NAME + value.getScreenName());
+						if (!value.getScreenName().equalsIgnoreCase(""))
+						{
+							labelTitleField.setText(vDiskAppConfig.APP_NAME + value.getScreenName());	
+						}
 						refreshCurrentFolder();
 					}
 				});

@@ -281,7 +281,7 @@ public class ListStyleButtonField extends Field
         switch(0)
         {
 			case LISTSTYLE_ALARMCLOCK:
-        		COLOR_BACKGROUND_FOCUS = 0x186DEF;
+        		COLOR_BACKGROUND_FOCUS = 0xfe3434; //0x186DEF;
         		
         		break;
 			case LISTSTYLE_WORLDCLOCK:
