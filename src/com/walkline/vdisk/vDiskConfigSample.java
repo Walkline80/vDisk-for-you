@@ -3,7 +3,7 @@ package com.walkline.vdisk;
 public class vDiskConfigSample //Chage to vDiskConfig
 {
 	public static final String client_ID = "";   //App Key
-	public static final String client_SERCRET = "";    //App Secret
+	public static final String client_SECRET = "";    //App Secret
 	public static final String redirect_URI = "";    //Your URL
 	public static String SINA_STORAGE_SERVICE_HOST = "up.sinastorage.com";
 

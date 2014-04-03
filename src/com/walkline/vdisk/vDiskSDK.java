@@ -1,6 +1,5 @@
 package com.walkline.vdisk;
 
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -10,7 +9,6 @@ import localization.vDiskSDKResource;
 import net.rim.device.api.browser.field2.BrowserField;
 import net.rim.device.api.browser.field2.BrowserFieldRequest;
 import net.rim.device.api.i18n.ResourceBundle;
-import net.rim.device.api.i18n.SimpleDateFormat;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.ui.Screen;
@@ -216,7 +214,7 @@ public class vDiskSDK implements vDiskSDKResource
 
 		Hashtable args = new Hashtable();
 		args.put("client_id", vDiskConfig.client_ID);
-		args.put("client_secret", vDiskConfig.client_SERCRET);
+		args.put("client_secret", vDiskConfig.client_SECRET);
 		args.put("grant_type", "refresh_token");
 		args.put("refresh_token", getRefreshToken());
 
@@ -1235,7 +1233,7 @@ public class vDiskSDK implements vDiskSDKResource
 
 			Hashtable args = new Hashtable();
 			args.put("client_id", vDiskConfig.client_ID);
-			args.put("client_secret", vDiskConfig.client_SERCRET);
+			args.put("client_secret", vDiskConfig.client_SECRET);
 			args.put("grant_type", "authorization_code");
 			args.put("redirect_uri", vDiskConfig.redirect_URI);
 			args.put("code", pCode);
