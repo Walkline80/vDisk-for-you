@@ -72,7 +72,7 @@ public class vDiskAppConfig implements Persistable
 	private static final int FILE_ACTION = 11;
 	private static final int ACCESS_TOKEN = 12;
 	private static final int REFRESH_TOKEN = 13;
-	private static final int EXPIRES_TIME = 14;
+	private static final int EXPIRES_IN = 14;
 
 	//Default values
 	private final int MAXUPLOADFILESIZE = 20 * 1024 * 1024; //20MB
@@ -99,23 +99,19 @@ public class vDiskAppConfig implements Persistable
 	private String _downloadURI = StorageType.DEFAULT_URI;
 	private String _username = "";
 	private String _password = "";
+	private String _accessToken = "";
+	private String _refresh_Token = "";
+	private long _expiresIn = 0;
 
 	public vDiskAppConfig()
 	{
-		_elements = new Vector(12);
+		_elements = new Vector(15);
 
 		for (int i=0; i<_elements.capacity(); i++)
 		{
 			_elements.addElement(new Object()); //(""));
 		}
 	}
-
-	//private boolean getElementBoolean(int id)
-	//{
-	//	String value = _elements.elementAt(id).toString();
-
-	//	return ((value != null) && value.equalsIgnoreCase("true"));
-	//}
 
 	private boolean getElementBoolean(int id)
 	{
@@ -130,9 +126,9 @@ public class vDiskAppConfig implements Persistable
 		return result;
 	}
 
-	//private boolean getElementBoolean(int id) {return ((Boolean) _elements.elementAt(id)).booleanValue();}
-
 	private int getElementInt(int id) {return Integer.parseInt(_elements.elementAt(id).toString());}
+
+	private long getElementLong(int id) {return Long.parseLong(_elements.elementAt(id).toString());}
 
 	private String getElementString(int id) {return (String) _elements.elementAt(id);}
 
@@ -218,6 +214,30 @@ public class vDiskAppConfig implements Persistable
 
 	public String getUsername() {return _username;}
 
+	public void setAccessToken(String value)
+	{
+		setElement(ACCESS_TOKEN, new String(value));
+		_accessToken = value;
+	}
+
+	public String getAccessToken() {return _accessToken;}
+
+	public void setRefreshToken(String value)
+	{
+		setElement(REFRESH_TOKEN, new String(value));
+		_refresh_Token = value;
+	}
+
+	public String getRefreshToken() {return _refresh_Token;}
+
+	public void setExpiresIn(long value)
+	{
+		setElement(EXPIRES_IN, new Long(value));
+		_expiresIn = value;
+	}
+
+	public long getExpiresIn() {return _expiresIn;}
+
 	public void setPassword(String value)
 	{
 		setElement(PASSWORD, new String(value));
@@ -273,6 +293,10 @@ public class vDiskAppConfig implements Persistable
 					_username = getElementString(USERNAME);
 					_password = getElementString(PASSWORD);
 
+					_accessToken = getElementString(ACCESS_TOKEN);
+					_refresh_Token = getElementString(REFRESH_TOKEN);
+					_expiresIn = getElementLong(EXPIRES_IN);
+
 					_autoMode = getElementBoolean(AUTO_LOGIN);
 					_safeMode = getElementBoolean(SAFE_MODE);
 					_overWrite = getElementBoolean(OVERWRITE);
@@ -284,7 +308,7 @@ public class vDiskAppConfig implements Persistable
 					_shortcutKey = getElementInt(SHORTCUT_KEY);
 					_fileAction = getElementInt(FILE_ACTION);
 					_sectionSize = getElementInt(SECTION_SIZE);
-					
+
 					if (vDisk != null)
 					{
 						vDisk.setAutoMode(_autoMode, _username, _password);
@@ -295,6 +319,9 @@ public class vDiskAppConfig implements Persistable
 						//vDisk.setOverwrite(_overWrite);
 						vDisk.setPreviewSize(_previewSize);
 						vDisk.setUploadSectionSize(_sectionSize);
+						vDisk.setAccessToken(_accessToken);
+						vDisk.setRefreshToken(_refresh_Token);
+						vDisk.setExpiresIn(_expiresIn);
 						vDisk.setMaxUploadFileSize(MAXUPLOADFILESIZE);
 					}
 				} else{
@@ -327,6 +354,10 @@ public class vDiskAppConfig implements Persistable
 		setPassword(_password);
 		setDownloadURI(_downloadURI);
 
+		setAccessToken(_accessToken);
+		setRefreshToken(_refresh_Token);
+		setExpiresIn(_expiresIn);
+
 		_data.addElement(_elements);
 
 		synchronized(_store)
@@ -345,6 +376,9 @@ public class vDiskAppConfig implements Persistable
 			//_vDisk.setOverwrite(true);
 			_vDisk.setPreviewSize(_previewSize);
 			_vDisk.setUploadSectionSize(_sectionSize);
+			_vDisk.setAccessToken(_accessToken);
+			_vDisk.setRefreshToken(_refresh_Token);
+			_vDisk.setExpiresIn(_expiresIn);
 			_vDisk.setMaxUploadFileSize(MAXUPLOADFILESIZE);
 		}
 	}
@@ -366,12 +400,16 @@ public class vDiskAppConfig implements Persistable
 		setPassword("");
 		setDownloadURI(StorageType.DEFAULT_URI);
 
+		setAccessToken("");
+		setRefreshToken("");
+		setExpiresIn(0);
+
 		_data.addElement(_elements);
 
 		synchronized(_store)
 		{
 			_store.setContents(_data);
-			_store.commit();
+			_store.forceCommit();
 		}
 
 		if (vDisk != null)
@@ -381,6 +419,9 @@ public class vDiskAppConfig implements Persistable
 			vDisk.setPostMethod(false);
 			vDisk.setRoot(ROOT);
 			vDisk.setDownloadURI(DOWNLOADURI);
+			vDisk.setAccessToken("");
+			vDisk.setRefreshToken("");
+			vDisk.setExpiresIn(0);
 			//vDisk.setOverwrite(true);
 			vDisk.setPreviewSize(PREVIEWSIZE);
 			vDisk.setUploadSectionSize(UPLOADSECTIONSIZE);
@@ -401,7 +442,10 @@ public class vDiskAppConfig implements Persistable
 				"\nFile Action: " + getFileAction() +
 				"\nUsername: " + getUsername() +
 				"\nPassword: " + getPassword() +
-				"\nDownload URI: " + getDownloadURI();
+				"\nDownload URI: " + getDownloadURI() +
+				"\nAccess Token: " + getAccessToken() +
+				"\nRefresh Token: " + getRefreshToken() +
+				"\nExpires In: " + getExpiresIn();
 	}
 
 	static

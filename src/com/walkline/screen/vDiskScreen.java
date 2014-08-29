@@ -37,6 +37,7 @@ import net.rim.device.api.ui.image.ImageFactory;
 import net.rim.device.api.ui.menu.CommandItem;
 import net.rim.device.api.ui.menu.CommandItemProvider;
 import net.rim.device.api.ui.menu.DefaultContextMenuProvider;
+import net.rim.device.api.ui.menu.SubMenu;
 import net.rim.device.api.ui.picker.FilePicker;
 import net.rim.device.api.util.StringProvider;
 
@@ -165,6 +166,11 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     	public void run() {uploadFile();}
     };
 
+    MenuItem menuNewFolder = new MenuItem(_bundle, MENU_NEW_FOLDER, 100, 35)
+    {
+    	public void run() {createFolder();}
+    };
+
     MenuItem menuSearch = new MenuItem(_bundle, MENU_SEARCH, 100, 40)
     {
     	public void run() {searchFile();}
@@ -190,20 +196,36 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     	public void run() {System.exit(0);}
     };
 
+    MenuItem menuToolsRefreshToken = new MenuItem(_bundle, MENU_LOGIN_AGAIN, 200, 10)
+    {
+    	public void run()
+    	{
+    		try {
+    			_vDisk.refreshAccessToken(true);
+    		} catch (vDiskException e) {}
+    	}
+    };
+    
     protected void makeMenu(Menu menu, int instance)
     {
+    	SubMenu menuTools = new SubMenu(null, _bundle, MENU_TOOLS, 100, 45);
+    	menuTools.add(menuToolsRefreshToken);
+
     	menu.add(menuRefresh);
     	menu.addSeparator();
     	menu.add(menuUpload);
     	menu.addSeparator();
+    	menu.add(menuNewFolder);
+    	menu.addSeparator();
     	//menu.add(menuSearch);
     	//menu.addSeparator();
+    	menu.add(menuTools);
     	menu.add(menuSettings);
     	menu.addSeparator();
     	menu.add(menuAbout);
     	menu.addSeparator();
-    	menu.add(menuRunInBackground);
-    	menu.addSeparator();
+    	//menu.add(menuRunInBackground);
+    	//menu.addSeparator();
     	menu.add(menuExit);
 
     	super.makeMenu(menu, instance);
@@ -463,7 +485,7 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 		if (item.isThumbExists())
 		{
 			UiApplication.getUiApplication().pushScreen(new PreviewImageFullScreen(_vDisk, item.getPath()));			
-		} else if (item.getFilename().endsWith(".mp3") | item.getFilename().endsWith(".wma")) {
+		} else if (item.getFilename().toLowerCase().endsWith(".mp3") | item.getFilename().toLowerCase().endsWith(".wma") | item.getFilename().toLowerCase().endsWith(".mp4") | item.getFilename().toLowerCase().endsWith(".3gp")) {
 			UiApplication.getUiApplication().pushScreen(new MediaPlayMainScreen(_vDisk, item.getPath()));
 		} else {
 			Function.errorDialog(getResString(MESSAGE_ALERT_CAN_NOT_PREVIEW_FILE));
@@ -747,7 +769,10 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 				{
 					public void run()
 					{
-						labelTitleField.setText(vDiskAppConfig.APP_NAME + value.getScreenName());
+						if (!value.getScreenName().equalsIgnoreCase(""))
+						{
+							labelTitleField.setText(vDiskAppConfig.APP_NAME + value.getScreenName());	
+						}
 						refreshCurrentFolder();
 					}
 				});

@@ -1,15 +1,30 @@
 package com.walkline.screen;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.microedition.io.Connector;
+import javax.microedition.io.file.FileConnection;
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
+import javax.microedition.media.Player;
+import javax.microedition.media.control.VideoControl;
+
 import localization.vDiskSDKResource;
+import net.rim.blackberry.api.browser.Browser;
 import net.rim.device.api.browser.field2.BrowserField;
 import net.rim.device.api.browser.field2.BrowserFieldConfig;
 import net.rim.device.api.browser.field2.BrowserFieldListener;
 import net.rim.device.api.i18n.ResourceBundle;
+import net.rim.device.api.io.File;
+import net.rim.device.api.io.http.HttpHeaders;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.system.Characters;
+import net.rim.device.api.system.Clipboard;
 import net.rim.device.api.system.Display;
+import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Graphics;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.FullScreen;
@@ -20,6 +35,7 @@ import net.rim.device.api.ui.container.VerticalFieldManager;
 import org.w3c.dom.Document;
 
 import com.walkline.app.vDiskAppConfig;
+import com.walkline.util.FileUtility;
 import com.walkline.util.Function;
 import com.walkline.util.StringUtility;
 import com.walkline.util.ui.ProgressAnimationField;
@@ -42,6 +58,7 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 	private GetMediaURLThread _getMedia = new GetMediaURLThread();
 	private LoadingScreen _loadingScreen = new LoadingScreen();
 	private FullScreen _main;
+	private Field _videoField;
 
 	public MediaPlayMainScreen(vDiskSDK vDisk, String filePath)
 	{
@@ -60,6 +77,10 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 		cf.setRetryFactor(2000);
 		cf.setConnectionTimeout(120000);
 
+		HttpHeaders headers = new HttpHeaders();
+		headers.addProperty(HttpHeaders.HEADER_CONTENT_TYPE, HttpHeaders.CONTENT_TYPE_TEXT_HTML);
+		headers.addProperty(HttpHeaders.HEADER_ACCEPT_CHARSET, "UTF-8");
+
 		bfc = new BrowserFieldConfig();
 		bfc.setProperty(BrowserFieldConfig.ALLOW_CS_XHR, Boolean.TRUE);
 		bfc.setProperty(BrowserFieldConfig.JAVASCRIPT_ENABLED, Boolean.TRUE);
@@ -67,10 +88,11 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 		bfc.setProperty(BrowserFieldConfig.NAVIGATION_MODE, BrowserFieldConfig.NAVIGATION_MODE_POINTER);
 		bfc.setProperty(BrowserFieldConfig.VIEWPORT_WIDTH, new Integer(Display.getWidth()));
 		bfc.setProperty(BrowserFieldConfig.CONNECTION_FACTORY, cf);
+		bfc.setProperty(BrowserFieldConfig.HTTP_HEADERS, headers);
 
 		_browserField = new BrowserField(bfc);
 
-		add(_browserField);
+		//add(_browserField);
 		//_browserField.addListener(new MyBrowserFieldListener());
 
 		_getMedia.start();
@@ -107,11 +129,11 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 
 	private void showContent()
 	{
-		if (_browserField.getScreen() == null)
+		if (_videoField.getScreen() == null)
 		{
 			synchronized (UiApplication.getEventLock())
 			{
-				_main.add(_browserField);
+				_main.add(_videoField);
 			}
 		}
 		
@@ -136,13 +158,52 @@ public class MediaPlayMainScreen extends MainScreen implements vDiskSDKResource
 					{
 						_url = value.getURL();
 
-						String mediaPlayer = "<html><body><video controls autoplay loop src=\"#url#\" width=\"#width#\" height=\"#height#\">Your browser can't support HTML5 video</video></body></html>";
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#url#", _url);
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#width#", String.valueOf(Display.getWidth()));
-						mediaPlayer = StringUtility.replace(mediaPlayer, "#height#", String.valueOf(Display.getHeight()));
+						try {
+							FileConnection file;
+							OutputStream output = null;
+							file = (FileConnection) Connector.open("file:///SDCard/url.html");
 
-						Function.errorDialog(mediaPlayer);
-						_browserField.displayContent(mediaPlayer, "http://localhost");
+							if (!file.exists()) {file.create();}
+							file.setWritable(true);
+
+							output = file.openOutputStream();
+							output.write(_url.getBytes());
+							output.flush();
+							output.close();
+							file.close();
+						} catch (Exception e) {
+						}
+
+						Player recorder;
+						try {
+							recorder = Manager.createPlayer(_url);
+							
+					        if (recorder != null)
+					        {
+					            recorder.prefetch();
+
+					            VideoControl videoControl = (VideoControl) recorder.getControl("VideoControl");
+
+					            if (videoControl != null)
+					            {
+					                // Use USE_GUI_PRIMITIVE since recorder returns a viewfinder
+					                // Use USE_GUI_ADVANCED if player is returning a playback field
+					                // in your app
+					                _videoField = (Field) videoControl.initDisplayMode(VideoControl.USE_GUI_PRIMITIVE, "net.rim.device.api.ui.Field" );
+
+									videoControl.setDisplaySize(Display.getWidth(), Display.getHeight());
+					                videoControl.setVisible( true );
+					                
+					                recorder.start();
+					            }
+					        }
+						} catch (IOException e1)
+						{
+							Function.errorDialog(e1.toString());
+						} catch (MediaException e1)
+						{
+							Function.errorDialog(e1.toString());
+						}
 					} else {
 						Function.errorDialog("Get file direct link failed.");
 					}

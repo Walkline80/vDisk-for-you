@@ -15,7 +15,7 @@ public class vDiskApp extends UiApplication
 {
 	private final String NEXT_URL = vDiskConfig.authorizeURL;
 	private final String APPLICATION_ID = vDiskConfig.client_ID;
-	private final String APPLICATION_SECRET = vDiskConfig.client_SERCRET;
+	private final String APPLICATION_SECRET = vDiskConfig.client_SECRET;
 
 	private vDiskSDK _vDisk;
 	private vDiskAppConfig _appConfig;
@@ -59,6 +59,8 @@ public class vDiskApp extends UiApplication
 			_appConfig = new vDiskAppConfig();
 			_appConfig.initialize(_vDisk);
 		}
+
+		_vDisk.setAppConfig(_appConfig);
 
 		if (_appConfig.isAccountEmpty() && _appConfig.isAutoMode())
 		{

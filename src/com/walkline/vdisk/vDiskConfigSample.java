@@ -3,9 +3,13 @@ package com.walkline.vdisk;
 public class vDiskConfigSample //Chage to vDiskConfig
 {
 	public static final String client_ID = "";   //App Key
-	public static final String client_SERCRET = "";    //App Secret
+	public static final String client_SECRET = "";    //App Secret
 	public static final String redirect_URI = "";    //Your URL
 	public static String SINA_STORAGE_SERVICE_HOST = "up.sinastorage.com";
+
+	/**
+	 * Method: <b>POST</b>
+	 */
 	public static final String accessTokenURL = "https://auth.sina.com.cn/oauth2/access_token";
 	public static final String authorizeURL = "https://auth.sina.com.cn/oauth2/authorize";
 	public static final String getAccountInfoURL = "https://api.weipan.cn/2/account/info";
@@ -47,9 +51,6 @@ public class vDiskConfigSample //Chage to vDiskConfig
 	 * Method: <b>POST</b>
 	 */
 	public static final String getMultiPartCompleteURL = "https://api.weipan.cn/2/multipart/complete";
-
-	public static final String ACCOUNT_USERNAME = "";
-	public static final String ACCOUNT_PASSWORD = "";
 
 	public static final String ROOT_BASIC = "basic";
 	public static final String ROOT_SANDBOX = "sandbox";

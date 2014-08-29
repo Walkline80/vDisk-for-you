@@ -7,6 +7,7 @@ import java.io.InputStream;
 import javax.microedition.io.file.FileConnection;
 
 import net.rim.device.api.crypto.MD5Digest;
+import net.rim.device.api.crypto.SHA1Digest;
 
 public class Digest
 {
