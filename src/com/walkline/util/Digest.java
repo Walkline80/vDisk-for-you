@@ -7,7 +7,6 @@ import java.io.InputStream;
 import javax.microedition.io.file.FileConnection;
 
 import net.rim.device.api.crypto.MD5Digest;
-import net.rim.device.api.crypto.SHA1Digest;
 
 public class Digest
 {
@@ -54,7 +53,7 @@ public class Digest
 		return toHexString(digest.getDigest());
 	}
 
-	public static String md5Hash111(FileConnection fconn)
+	public static String md5Hash(FileConnection fconn)
 	{
 		MD5Digest md5 = new MD5Digest();
 		md5.reset();
