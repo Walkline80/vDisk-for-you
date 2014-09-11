@@ -270,6 +270,10 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 			case Characters.LATIN_SMALL_LETTER_D:
 				downloadFile();
 				return true;
+			case Characters.LATIN_CAPITAL_LETTER_E:
+			case Characters.LATIN_SMALL_LETTER_E:
+				getDirectLink();
+				return true;
 			case Characters.ESCAPE:
 				if (!_currentPath.equals("") && !_currentPath.equals("/"))
 				{
