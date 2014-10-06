@@ -49,12 +49,9 @@ MENU_REFRESH#0="R\u0332efresh";
 MENU_RUN_IN_BACKGROUND#0="Run in background";
 MENU_SEARCH#0="S\u0332earch";
 MENU_SETTINGS#0="Settings";
-<<<<<<< HEAD
 MENU_SWITCH_TO#0="Switch to";
 MENU_SWITCH_TO_PRIVATE_AREA#0="Private area";
 MENU_SWITCH_TO_PUBLIC_AREA#0="Public area";
-=======
->>>>>>> 8804d7fca2f741ba178de3f91037b6290932a6b4
 MENU_TOOLS#0="Tools";
 MENU_UPLOAD#0="U\u0332pload";
 MESSAGE_ALERT_CAN_NOT_PREVIEW_FILE#0="Can not preview this file!";
