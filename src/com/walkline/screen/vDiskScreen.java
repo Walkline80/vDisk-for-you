@@ -54,7 +54,10 @@ import com.walkline.util.ui.ForegroundManager;
 import com.walkline.util.ui.ListStyleButtonField;
 import com.walkline.util.ui.ListStyleButtonSet;
 import com.walkline.vdisk.BasicAsyncCallback;
+<<<<<<< HEAD
 import com.walkline.vdisk.vDiskConfig;
+=======
+>>>>>>> 8804d7fca2f741ba178de3f91037b6290932a6b4
 import com.walkline.vdisk.vDiskException;
 import com.walkline.vdisk.vDiskSDK;
 import com.walkline.vdisk.dao.vDiskFile;
@@ -145,7 +148,12 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
 		});
 	}
 
+<<<<<<< HEAD
     MenuItem menuSwitchToPrivateArea = new MenuItem(_bundle, MENU_SWITCH_TO_PRIVATE_AREA, 300, 10)
+=======
+    /*
+    MenuItem menuSwitchToPrivateArea = new MenuItem(new StringProvider("Private area"), 200, 20)
+>>>>>>> 8804d7fca2f741ba178de3f91037b6290932a6b4
     {
     	public void run()
     	{
@@ -154,6 +162,7 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     		refreshCurrentFolder();
     	}
     };
+<<<<<<< HEAD
 
     MenuItem menuSwitchToPublicArea = new MenuItem(_bundle, MENU_SWITCH_TO_PUBLIC_AREA, 300, 20)
     {
@@ -164,6 +173,9 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     		refreshCurrentFolder();
     	}
     };
+=======
+    */
+>>>>>>> 8804d7fca2f741ba178de3f91037b6290932a6b4
 
     MenuItem menuRefresh = new MenuItem(_bundle, MENU_REFRESH, 100, 10)
     {
@@ -219,6 +231,7 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     {
     	SubMenu menuTools = new SubMenu(null, _bundle, MENU_TOOLS, 100, 45);
     	menuTools.add(menuToolsRefreshToken);
+<<<<<<< HEAD
     	menuTools.addSeparator();
 
     	SubMenu menuToolsSwitchTo = new SubMenu(null, _bundle, MENU_SWITCH_TO, 200, 20);
@@ -226,6 +239,8 @@ public class vDiskScreen extends MainScreen implements vDiskSDKResource
     	menuToolsSwitchTo.add(menuSwitchToPublicArea);
 
     	menuTools.add(menuToolsSwitchTo);
+=======
+>>>>>>> 8804d7fca2f741ba178de3f91037b6290932a6b4
 
     	menu.add(menuRefresh);
     	menu.addSeparator();
