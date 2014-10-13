@@ -12,6 +12,7 @@ import localization.vDiskSDKResource;
 
 import net.rim.blackberry.api.browser.PostData;
 import net.rim.blackberry.api.browser.URLEncodedPostData;
+import net.rim.device.api.compress.GZIPInputStream;
 import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.io.http.HttpProtocolConstants;
 import net.rim.device.api.io.transport.ConnectionDescriptor;
@@ -27,12 +28,10 @@ public class HttpClient implements vDiskSDKResource
 	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
 
 	protected ConnectionFactory cf;
-	//protected Logger log;
 
 	public HttpClient(ConnectionFactory pcf)
 	{
 		cf = pcf;
-		//log = Logger.getLogger(getClass());
 	}
 
 	public StringBuffer doGet(String url, Hashtable args) throws Exception
@@ -52,13 +51,11 @@ public class HttpClient implements vDiskSDKResource
 			if ((url == null) || url.equalsIgnoreCase("") || (cf == null)) {return null;}
 
 			ConnectionDescriptor connd = cf.getConnection(url);
-			String transportTypeName = TransportInfo.getTransportTypeName(connd.getTransportDescriptor().getTransportType());
 			conn = (HttpConnection) connd.getConnection();
+			conn.setRequestProperty(HttpProtocolConstants.HEADER_ACCEPT_ENCODING, "gzip, deflate");
 
-			//log.info("HTTP-GET (" + transportTypeName + "): " + conn.getURL());
 			int resCode = conn.getResponseCode();
-			String resMessage = conn.getResponseMessage();
-			//log.info("HTTP-GET Response: " + resCode + " " + resMessage);
+			//String resMessage = conn.getResponseMessage();
 
 			switch (resCode)
 			{
@@ -68,11 +65,13 @@ public class HttpClient implements vDiskSDKResource
 				case HttpConnection.HTTP_UNAUTHORIZED:
 				{
 					InputStream inputStream = conn.openInputStream();
+					GZIPInputStream gzipInputStream = new GZIPInputStream(inputStream);
+					//Function.errorDialog(inputStream.available()+"");
 					int c;
 
-					while ((c = inputStream.read()) != -1) {buffer.append((char) c);}
+					while ((c = gzipInputStream.read()) != -1) {buffer.append((char) c);}
 
-					inputStream.close();
+					gzipInputStream.close();
 					break;
 				}
 				case HttpConnection.HTTP_TEMP_REDIRECT:
@@ -87,12 +86,6 @@ public class HttpClient implements vDiskSDKResource
 					Function.errorDialog(getResString(MESSAGE_ERROR_ACCESS_FORBIDDEN));
 					break;
 				}
-			}
-
-			//log.info("HTTP-GET Body: " + conn.getType() + "(" + buffer.length() + ")");
-			if (!conn.getType().startsWith("image/") && buffer.length() < 500)
-			{
-				//log.debug(buffer.toString());
 			}
 		} catch (Exception e) {
 			throw e;
@@ -127,7 +120,7 @@ public class HttpClient implements vDiskSDKResource
 			if ((url == null) || url.equalsIgnoreCase("") || (cf == null)) {return null;}
 
 			ConnectionDescriptor connd = cf.getConnection(url);
-			String transportTypeName = TransportInfo.getTransportTypeName(connd.getTransportDescriptor().getTransportType());
+			//String transportTypeName = TransportInfo.getTransportTypeName(connd.getTransportDescriptor().getTransportType());
 			conn = (HttpConnection) connd.getConnection();
 
 			if (conn != null) {
@@ -143,13 +136,10 @@ public class HttpClient implements vDiskSDKResource
 						conn.setRequestMethod(HttpConnection.GET);
 					}
 				} catch (Throwable t) {
-					//log.error("Throwable: " + t.getMessage());
 				}
 
-				//log.info("HTTP-POST (" + transportTypeName + "): " + conn.getURL());
 				int resCode = conn.getResponseCode();
-				String resMessage = conn.getResponseMessage();
-				//log.info("HTTP-POST Response: " + resCode + " " + resMessage);
+				//String resMessage = conn.getResponseMessage();
 
 				switch (resCode)
 				{
@@ -180,13 +170,7 @@ public class HttpClient implements vDiskSDKResource
 						break;
 				}
 			}
-			//log.info("HTTP-POST Body: " + conn.getType() + "(" + buffer.length() + ")");
-			if (buffer.length() < 500)
-			{
-				//log.debug(buffer.toString());
-			}
 		} catch (Throwable t) {
-			//log.error("Throwable: " + t.getMessage());
 		} finally {
 			if (os != null) {try {os.close(); os = null;} catch (IOException e) {}}
 			if (conn != null) {try {conn.close(); conn = null;} catch (IOException e) {}}
